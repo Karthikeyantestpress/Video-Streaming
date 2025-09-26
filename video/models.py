@@ -1,4 +1,5 @@
 from django.db import models
+from .utils import get_language_display_name
 
 class Video(models.Model):
     title = models.CharField(max_length=255)
@@ -52,4 +53,7 @@ class AudioTrack(models.Model):
 
     def __str__(self):
         return f'{self.language} - {self.video.title}'
-
+   
+    @property
+    def display_language(self):
+        return get_language_display_name(self.language)

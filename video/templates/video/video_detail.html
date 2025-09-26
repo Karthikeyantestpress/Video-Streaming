@@ -73,11 +73,11 @@
 
   <!-- Audio Tracks -->
   <div class="mt-6">
-    <h2 class="text-xl font-semibold text-gray-800">Audio Tracks</h2>
-    <div class="space-x-2">
+    <h2 class="text-xl font-semibold text-gray-800">Available Languages</h2>
+    <div class="space-x-2 mt-4">
       {% for audio in video.audio_tracks.all %}
-        <span class="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">
-          {{ audio.language }}
+        <span class="px-2 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">
+          {{ audio.display_language }}
         </span>
       {% endfor %}
     </div>
