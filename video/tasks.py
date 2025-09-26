@@ -10,6 +10,7 @@ from .models import Video, AudioTrack
 from .utils import upload_video_to_minio
 import boto3
 import langcodes
+from langcodes import standardize_tag
 
 # MinIO Client Configuration
 client = Minio( 
@@ -20,6 +21,7 @@ client = Minio(
 )
 
 def get_full_language_name(code):
+    code = standardize_tag(code)
     """Return the full language name for a given code."""
     language = langcodes.Language.make(code)
     return language.display_name()

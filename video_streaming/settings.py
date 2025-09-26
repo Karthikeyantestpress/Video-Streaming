@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'video',  # Add the video app
     'django_celery_beat',  # Celery periodic tasks
+        'django_extensions',
 ]
 
 MIDDLEWARE = [
