@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ video.title }} - Video Detail{% endblock %}
+{% block extra_head %}
+<script type="module" src="https://cdn.jsdelivr.net/npm/media-chrome@4/+esm"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/media-chrome/menu/+esm"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/videojs-video-element@1.2/+esm"></script>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6 relative w-full">
+
+  <!-- Video Title and Transcoding Status -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-semibold text-gray-800">{{ video.title }}</h1>
+
+    <!-- Transcoding Status Badge -->
+    {% if video.status == 'pending' %}
+      <span class="px-3 py-1 text-sm font-medium text-white bg-yellow-500 rounded-full">Pending</span>
+    {% elif video.status == 'in_progress' %}
+      <span class="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">In Progress</span>
+    {% elif video.status == 'completed' %}
+      <span class="px-3 py-1 text-sm font-medium text-white bg-green-500 rounded-full">Completed</span>
+    {% elif video.status == 'failed' %}
+      <span class="px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-full">Failed</span>
+    {% endif %}
+  </div>
+
+  {% if video.status == 'completed' %}
+    <div class="relative h-96 mt-4">
+      <!-- 16:9 Aspect Ratio container -->
+      <media-controller class="w-full h-full">
+        <videojs-video 
+          src="http://localhost:9000/videos/transcoded_videos/{{ video.transcoding_uuid}}/master.m3u8" 
+          slot="media" 
+          crossorigin playsInline autoplay 
+          class="w-full h-full object-contain">
+        </videojs-video>
+        <media-audio-track-menu hidden anchor="auto"></media-audio-track-menu>
+        <media-settings-menu hidden anchor="auto">
+          <media-settings-menu-item>
+            Speed
+            <media-playback-rate-menu slot="submenu" hidden>
+              <div slot="title">Speed</div>
+            </media-playback-rate-menu>
+          </media-settings-menu-item>
+          <media-settings-menu-item>
+            Quality
+            <media-rendition-menu slot="submenu" hidden>
+              <div slot="title">Quality</div>
+            </media-rendition-menu>
+          </media-settings-menu-item>
+          <media-settings-menu-item>
+            Captions
+            <media-captions-menu slot="submenu" hidden>
+              <div slot="title">Captions</div>
+            </media-captions-menu>
+          </media-settings-menu-item>
+        </media-settings-menu>
+        <media-control-bar class="absolute bottom-0 left-0 right-0">
+          <media-play-button></media-play-button>
+          <media-time-range></media-time-range>
+          <media-time-display showduration></media-time-display>
+          <media-mute-button></media-mute-button>
+          <media-volume-range></media-volume-range>
+          <media-settings-menu-button></media-settings-menu-button>
+          <media-audio-track-menu-button></media-audio-track-menu-button>
+          <media-fullscreen-button></media-fullscreen-button>
+        </media-control-bar>
+      </media-controller>
+    </div>
+  {% endif %}
+
+  <!-- Audio Tracks -->
+  <div class="mt-6">
+    <h2 class="text-xl font-semibold text-gray-800">Audio Tracks</h2>
+    <div class="space-x-2">
+      {% for audio in video.audio_tracks.all %}
+        <span class="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">
+          {{ audio.language }}
+        </span>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

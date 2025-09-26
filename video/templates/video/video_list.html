@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Video List{% endblock %}
+
+{% block content %}
+    <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-10">Video List</h1>
+
+    <!-- Video List -->
+    <div class="space-y-6">
+        {% for video in videos %}
+            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 ease-in-out">
+                <!-- Video Title and Transcoding Status -->
+                <div class="mb-4 flex justify-between items-center">
+                    <!-- Video Title -->
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-3">
+                        <a href="{% url 'video:detail' video.id %}" class="text-blue-600 hover:text-blue-800">
+                            {{ video.title }}
+                        </a>
+                    </h2>
+
+                    <!-- Transcoding Status -->
+                    {% if video.status == 'pending' %}
+                        <span class="px-3 py-1 text-sm font-medium text-white bg-yellow-500 rounded-full">Pending</span>
+                    {% elif video.status == 'in_progress' %}
+                        <span class="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">In Progress</span>
+                    {% elif video.status == 'completed' %}
+                        <span class="px-3 py-1 text-sm font-medium text-white bg-green-500 rounded-full">Completed</span>
+                    {% elif video.status == 'failed' %}
+                        <span class="px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-full">Failed</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

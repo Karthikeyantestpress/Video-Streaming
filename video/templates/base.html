@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Website{% endblock %}</title>
+    
+    <!-- Tailwind CSS CDN -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+
+    <!-- Media Chrome CDN -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/media-chrome@4/+esm"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/media-chrome/menu/+esm"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/videojs-video-element@1.2/+esm"></script>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-100">
+
+    <!-- Header Section -->
+    <header class="bg-blue-500 p-4 text-white">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-semibold">My Video Platform</h1>
+            <nav>
+                <ul class="flex space-x-4">
+                    <li><a href="/" class="hover:text-blue-300">Home</a></li>
+                    <li><a href="/video/upload/" class="hover:text-blue-300">Upload Video</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="py-10">
+        <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+            {% block content %}
+            <!-- Content will be injected here -->
+            {% endblock %}
+        </div>
+    </main>
+
+
+</body>
+</html>
