@@ -33,7 +33,7 @@
 
     <!-- Main Content Area -->
     <main class="py-10">
-        <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+        <div class="{% block main %}max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg{% endblock %}">
             {% block content %}
             <!-- Content will be injected here -->
             {% endblock %}

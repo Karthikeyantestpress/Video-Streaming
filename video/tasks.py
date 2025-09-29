@@ -1,3 +1,4 @@
+
 import os
 import subprocess
 import shutil
@@ -66,6 +67,7 @@ def transcode_video(video_id):
     video = Video.objects.get(id=video_id)
     video.status = 'in_progress'
     video.save()
+    video_uuid = str(video.transcoding_uuid)
     download_folder = make_download_directory(video_uuid)
     input_path = os.path.join(download_folder, f'{video_uuid}.mp4')
     video_file_key = video.video_file.name
@@ -89,3 +91,45 @@ def transcode_video(video_id):
     
     shutil.rmtree(download_folder)
     shutil.rmtree(output_folder)
+
+
+@shared_task
+def transcode_audio_for_video(audio_track_id):
+    """
+    Transcode a user-uploaded audio file to HLS, update AudioTrack and master playlist.
+    """
+    audio_track = AudioTrack.objects.get(id=audio_track_id)
+    video = audio_track.video
+    video_uuid = str(video.transcoding_uuid)
+    # Prepare paths
+    download_folder = make_download_directory(video_uuid)
+    output_folder = make_transcoded_directory('transcoded_video', video_uuid)
+    # Download or copy the audio file to a working directory
+    input_audio_path = os.path.join(download_folder, os.path.basename(audio_track.audio_file.name))
+    # Always download the file from storage (MinIO, S3, etc.)
+    if not os.path.exists(input_audio_path):
+        # audio_file.name is the key in the storage bucket
+        download_file_from_minio('videos', audio_track.audio_file.name, input_audio_path)
+    # Transcode audio to HLS
+    language = audio_track.language
+    audio_playlist_name = f"audio_{language}_playlist.m3u8"
+    audio_hls_command = [
+        'ffmpeg', '-i', input_audio_path, '-vn', '-c:a', 'aac', '-b:a', '128k',
+        '-f', 'hls', '-hls_time', '10', '-hls_list_size', '0',
+        '-hls_segment_filename', f"{output_folder}/asegment_{language}_%d.ts",
+        f"{output_folder}/{audio_playlist_name}"
+    ]
+    subprocess.run(audio_hls_command, check=True)
+    # Update AudioTrack with playlist path
+    audio_track.transcoded_playlist = f"{video_uuid}/{audio_playlist_name}"
+    audio_track.save()
+    # Update master playlist to include new audio
+    # Gather all audio playlists for this video
+    all_audio_tracks = AudioTrack.objects.filter(video=video, transcoded_playlist__isnull=False)
+    audio_playlists = [(track.language, os.path.basename(track.transcoded_playlist)) for track in all_audio_tracks]
+    create_master_hls_playlist(output_folder, audio_playlists)
+    # Optionally, upload new segments and playlist to storage
+    subprocess.run(['mc', 'cp', '-r', output_folder, f'myminio/videos/transcoded_videos'], check=True)
+    video.master_playlist = f"{video_uuid}/master.m3u8"
+    video.save()
+    shutil.rmtree(download_folder)

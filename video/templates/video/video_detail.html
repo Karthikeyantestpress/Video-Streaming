@@ -6,82 +6,120 @@
 <script type="module" src="https://cdn.jsdelivr.net/npm/media-chrome/menu/+esm"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/videojs-video-element@1.2/+esm"></script>
 {% endblock %}
-
+{% block main %}max-w-4xl mx-auto {% endblock %}
 {% block content %}
-<div class="space-y-6 relative w-full">
+<div class="grid grid-cols-1 gap-10 max-w-5xl mx-auto w-full">
 
-  <!-- Video Title and Transcoding Status -->
-  <div class="flex items-center justify-between">
-    <h1 class="text-3xl font-semibold text-gray-800">{{ video.title }}</h1>
+  <!-- Section 1: Video Player -->
+  <div class="bg-white dark:bg-neutral-900 shadow-md rounded-lg p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h1 class="text-3xl font-semibold text-gray-800 dark:text-gray-200">{{ video.title }}</h1>
 
-    <!-- Transcoding Status Badge -->
-    {% if video.status == 'pending' %}
-      <span class="px-3 py-1 text-sm font-medium text-white bg-yellow-500 rounded-full">Pending</span>
-    {% elif video.status == 'in_progress' %}
-      <span class="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">In Progress</span>
-    {% elif video.status == 'completed' %}
-      <span class="px-3 py-1 text-sm font-medium text-white bg-green-500 rounded-full">Completed</span>
-    {% elif video.status == 'failed' %}
-      <span class="px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-full">Failed</span>
+      <!-- Transcoding Status Badge -->
+      {% if video.status == 'pending' %}
+        <span class="px-3 py-1 text-sm font-medium text-white bg-yellow-500 rounded-full">Pending</span>
+      {% elif video.status == 'in_progress' %}
+        <span class="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">In Progress</span>
+      {% elif video.status == 'completed' %}
+        <span class="px-3 py-1 text-sm font-medium text-white bg-green-500 rounded-full">Completed</span>
+      {% elif video.status == 'failed' %}
+        <span class="px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-full">Failed</span>
+      {% endif %}
+    </div>
+
+    {% if video.status == 'completed' %}
+      <div class="relative h-96">
+        <media-controller class="w-full h-full">
+          <videojs-video 
+            src="http://localhost:9000/videos/transcoded_videos/{{ video.transcoding_uuid }}/master.m3u8" 
+            slot="media" 
+            crossorigin playsInline autoplay 
+            class="w-full h-full object-contain">
+          </videojs-video>
+          <media-audio-track-menu hidden anchor="auto"></media-audio-track-menu>
+          <media-settings-menu hidden anchor="auto">
+            <media-settings-menu-item>
+              Speed
+              <media-playback-rate-menu slot="submenu" hidden>
+                <div slot="title">Speed</div>
+              </media-playback-rate-menu>
+            </media-settings-menu-item>
+            <media-settings-menu-item>
+              Quality
+              <media-rendition-menu slot="submenu" hidden>
+                <div slot="title">Quality</div>
+              </media-rendition-menu>
+            </media-settings-menu-item>
+            <media-settings-menu-item>
+              Captions
+              <media-captions-menu slot="submenu" hidden>
+                <div slot="title">Captions</div>
+              </media-captions-menu>
+            </media-settings-menu-item>
+          </media-settings-menu>
+          <media-control-bar class="absolute bottom-0 left-0 right-0">
+            <media-play-button></media-play-button>
+            <media-time-range></media-time-range>
+            <media-time-display showduration></media-time-display>
+            <media-mute-button></media-mute-button>
+            <media-volume-range></media-volume-range>
+            <media-settings-menu-button></media-settings-menu-button>
+            <media-audio-track-menu-button></media-audio-track-menu-button>
+            <media-fullscreen-button></media-fullscreen-button>
+          </media-control-bar>
+        </media-controller>
+      </div>
     {% endif %}
   </div>
 
-  {% if video.status == 'completed' %}
-    <div class="relative h-96 mt-4">
-      <!-- 16:9 Aspect Ratio container -->
-      <media-controller class="w-full h-full">
-        <videojs-video 
-          src="http://localhost:9000/videos/transcoded_videos/{{ video.transcoding_uuid}}/master.m3u8" 
-          slot="media" 
-          crossorigin playsInline autoplay 
-          class="w-full h-full object-contain">
-        </videojs-video>
-        <media-audio-track-menu hidden anchor="auto"></media-audio-track-menu>
-        <media-settings-menu hidden anchor="auto">
-          <media-settings-menu-item>
-            Speed
-            <media-playback-rate-menu slot="submenu" hidden>
-              <div slot="title">Speed</div>
-            </media-playback-rate-menu>
-          </media-settings-menu-item>
-          <media-settings-menu-item>
-            Quality
-            <media-rendition-menu slot="submenu" hidden>
-              <div slot="title">Quality</div>
-            </media-rendition-menu>
-          </media-settings-menu-item>
-          <media-settings-menu-item>
-            Captions
-            <media-captions-menu slot="submenu" hidden>
-              <div slot="title">Captions</div>
-            </media-captions-menu>
-          </media-settings-menu-item>
-        </media-settings-menu>
-        <media-control-bar class="absolute bottom-0 left-0 right-0">
-          <media-play-button></media-play-button>
-          <media-time-range></media-time-range>
-          <media-time-display showduration></media-time-display>
-          <media-mute-button></media-mute-button>
-          <media-volume-range></media-volume-range>
-          <media-settings-menu-button></media-settings-menu-button>
-          <media-audio-track-menu-button></media-audio-track-menu-button>
-          <media-fullscreen-button></media-fullscreen-button>
-        </media-control-bar>
-      </media-controller>
-    </div>
-  {% endif %}
-
-  <!-- Audio Tracks -->
-  <div class="mt-6">
-    <h2 class="text-xl font-semibold text-gray-800">Available Languages</h2>
-    <div class="space-x-2 mt-4">
+  <!-- Section 2: Audio Tracks -->
+  <div class="bg-white dark:bg-neutral-900 shadow-md rounded-lg p-6">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">🌐 Available Languages</h2>
+    <div class="flex flex-wrap gap-2">
       {% for audio in video.audio_tracks.all %}
-        <span class="px-2 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">
+        <span class="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">
           {{ audio.display_language }}
         </span>
+      {% empty %}
+        <p class="text-sm text-gray-500 dark:text-gray-400">No audio tracks uploaded yet.</p>
       {% endfor %}
     </div>
   </div>
+
+    {% if video.status == 'completed' %}
+  <div class="bg-white dark:bg-neutral-900 shadow-md rounded-lg p-6">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200 flex items-center gap-2">
+      🎵 Add New Audio Track
+    </h2>
+
+    {% if audio_upload_success %}
+      <div class="flex items-center gap-2 p-3 mb-4 rounded-lg bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-300">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M5 13l4 4L19 7"/>
+        </svg>
+        <span>Audio uploaded successfully! Transcoding will start soon.</span>
+      </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="space-y-5">
+      {% csrf_token %}
+      
+
+
+      <div class="space-y-3">
+        {{ audio_form.as_p }}
+      </div>
+
+      <button type="submit" name="audio_upload"
+              class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium
+                     text-white bg-blue-600 rounded-lg shadow-sm 
+                     hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        Upload Audio
+      </button>
+    </form>
+  </div>
+  {% endif %}
 
 </div>
 {% endblock %}

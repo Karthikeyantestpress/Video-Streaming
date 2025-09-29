@@ -40,7 +40,8 @@ class Video(models.Model):
 class AudioTrack(models.Model):
     video = models.ForeignKey(Video, related_name='audio_tracks', on_delete=models.CASCADE)
     language = models.CharField(max_length=100)
-    audio_file = models.FileField(upload_to='audio_tracks/')  # Original uploaded audio (if separate)
+    # This field is now used for user-uploaded audio files (mp3, aac, etc.)
+    audio_file = models.FileField(upload_to='audio_tracks/', null=True, blank=True, help_text="User-uploaded audio file (mp3, aac, etc.)")
     is_default = models.BooleanField(default=False)
 
     # New fields for transcoded audio
@@ -50,6 +51,9 @@ class AudioTrack(models.Model):
         blank=True,
         help_text="Path or MinIO key for this audio track's HLS playlist (audio_XX_playlist.m3u8)"
     )
+
+    # Field to distinguish if this audio was uploaded by user or extracted from video
+    is_user_uploaded = models.BooleanField(default=False, help_text="True if this audio was uploaded by user, False if extracted from video.")
 
     def __str__(self):
         return f'{self.language} - {self.video.title}'
