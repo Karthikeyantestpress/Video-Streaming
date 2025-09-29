@@ -15,16 +15,25 @@
     <div class="flex items-center justify-between mb-4">
       <h1 class="text-3xl font-semibold text-gray-800 dark:text-gray-200">{{ video.title }}</h1>
 
-      <!-- Transcoding Status Badge -->
-      {% if video.status == 'pending' %}
-        <span class="px-3 py-1 text-sm font-medium text-white bg-yellow-500 rounded-full">Pending</span>
-      {% elif video.status == 'in_progress' %}
-        <span class="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">In Progress</span>
-      {% elif video.status == 'completed' %}
-        <span class="px-3 py-1 text-sm font-medium text-white bg-green-500 rounded-full">Completed</span>
-      {% elif video.status == 'failed' %}
-        <span class="px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-full">Failed</span>
-      {% endif %}
+        <div class="flex flex-col items-end w-1/2">
+          {% if video.status == 'pending' %}
+            <span class="px-3 py-1 text-sm font-medium text-white bg-yellow-500 rounded-full">Pending</span>
+          {% elif video.status == 'in_progress' %}
+            <span class="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">In Progress</span>
+          {% elif video.status == 'completed' %}
+            <span class="px-3 py-1 text-sm font-medium text-white bg-green-500 rounded-full">Completed</span>
+          {% elif video.status == 'failed' %}
+            <span class="px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-full">Failed</span>
+          {% endif %}
+          {% if video.status != 'completed' %}
+          <div class="w-full mt-2">
+            <div class="h-2 bg-gray-200 rounded">
+              <div class="h-2 rounded bg-blue-500 transition-all duration-300" style="width: {{ video.progress }}%;"></div>
+            </div>
+            <div class="text-xs text-right text-gray-600 mt-1">{{ video.progress }}%</div>
+          </div>
+          {% endif %}
+        </div>
     </div>
 
     {% if video.status == 'completed' %}
@@ -73,15 +82,46 @@
   </div>
 
   <!-- Section 2: Audio Tracks -->
+
+  <!-- Section: Available Languages -->
   <div class="bg-white dark:bg-neutral-900 shadow-md rounded-lg p-6">
     <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">🌐 Available Languages</h2>
     <div class="flex flex-wrap gap-2">
       {% for audio in video.audio_tracks.all %}
-        <span class="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full">
-          {{ audio.display_language }}
-        </span>
+        {% if audio.status == 'completed' %}
+          <span class="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full mr-2 mb-2">
+            {{ audio.display_language }}
+          </span>
+        {% endif %}
       {% empty %}
         <p class="text-sm text-gray-500 dark:text-gray-400">No audio tracks uploaded yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Section: Transcoding Languages -->
+  <div class="bg-white dark:bg-neutral-900 shadow-md rounded-lg p-6 mt-4">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">⏳ Transcoding Languages</h2>
+    <div class="space-y-2">
+      {% for audio in video.audio_tracks.all %}
+        {% if audio.status != 'completed' %}
+          <div class="flex items-center mb-2">
+            <span class="px-3 py-1 text-sm font-medium text-white bg-yellow-500 rounded-full mr-4 min-w-[100px] text-center">
+              {{ audio.display_language }}
+            </span>
+            <div class="flex-1">
+              <div class="h-2 bg-gray-200 rounded">
+                <div class="h-2 rounded bg-green-500 transition-all duration-300" style="width: {{ audio.progress }}%;"></div>
+              </div>
+              <div class="text-xs text-right text-gray-600 mt-0.5">{{ audio.progress }}%</div>
+            </div>
+            {% if audio.status == 'failed' %}
+              <div class="text-xs text-red-600 ml-4">Failed</div>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% empty %}
+        <p class="text-sm text-gray-500 dark:text-gray-400">No audio tracks are currently transcoding.</p>
       {% endfor %}
     </div>
   </div>

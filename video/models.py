@@ -26,12 +26,15 @@ class Video(models.Model):
         ('completed', 'Completed'),
         ('failed', 'Failed')
     ]
+
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default='pending',
         help_text="Status of the video transcoding process"
     )
+
+    progress = models.PositiveSmallIntegerField(default=0, help_text="Transcoding progress percentage (0-100)")
 
     def __str__(self):
         return self.title
@@ -54,6 +57,22 @@ class AudioTrack(models.Model):
 
     # Field to distinguish if this audio was uploaded by user or extracted from video
     is_user_uploaded = models.BooleanField(default=False, help_text="True if this audio was uploaded by user, False if extracted from video.")
+
+
+
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed')
+    ]
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending',
+        help_text="Status of the audio transcoding process"
+    )
+    progress = models.PositiveSmallIntegerField(default=0, help_text="Audio transcoding progress percentage (0-100)")
 
     def __str__(self):
         return f'{self.language} - {self.video.title}'
