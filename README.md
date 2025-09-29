@@ -1,41 +1,44 @@
-````markdown
+
+---
+
 # 🎥 Django Video Streaming Platform
 
 A complete **Django-based Video Streaming Platform** that supports **HLS transcoding**, **multi-language audio tracks**, **background processing with Celery**, and **S3-compatible storage** using **MinIO**.
 
 This project allows users to:
-- Upload videos (MP4 format)
-- Transcode videos into HLS format (`.m3u8` playlists + `.ts` segments)
-- Automatically extract and manage multiple audio tracks
-- Upload additional language-specific audio tracks
-- Store and serve files from **MinIO** (S3-compatible)
-- Process tasks asynchronously using **Celery** with **Redis** broker
+
+* Upload videos (MP4 format)
+* Transcode videos into HLS format (`.m3u8` playlists + `.ts` segments)
+* Automatically extract and manage multiple audio tracks
+* Upload additional language-specific audio tracks
+* Store and serve files from **MinIO** (S3-compatible)
+* Process tasks asynchronously using **Celery** with **Redis** broker
 
 ---
 
 ## 🚀 Features
 
-- ✅ Video upload via web form  
-- ✅ Asynchronous transcoding with Celery  
-- ✅ FFmpeg-based HLS conversion  
-- ✅ Multi-language audio support  
-- ✅ Master playlist generation (`master.m3u8`)  
-- ✅ MinIO (S3-compatible) storage  
-- ✅ Track status and progress  
-- ✅ Readable language names with `langcodes`
+* ✅ Video upload via web form
+* ✅ Asynchronous transcoding with Celery
+* ✅ FFmpeg-based HLS conversion
+* ✅ Multi-language audio support
+* ✅ Master playlist generation (`master.m3u8`)
+* ✅ MinIO (S3-compatible) storage
+* ✅ Track status and progress
+* ✅ Readable language names with `langcodes`
 
 ---
 
 ## 🧱 Tech Stack
 
-| Component | Description |
-|-----------|-------------|
-| **Framework** | Django 5.2.6 |
-| **Async Tasks** | Celery 5.5.3 |
-| **Broker** | Redis |
-| **Storage** | MinIO |
-| **Encoding** | FFmpeg |
-| **ORM** | Django ORM (SQLite by default) |
+| Component       | Description                    |
+| --------------- | ------------------------------ |
+| **Framework**   | Django 5.2.6                   |
+| **Async Tasks** | Celery 5.5.3                   |
+| **Broker**      | Redis                          |
+| **Storage**     | MinIO                          |
+| **Encoding**    | FFmpeg                         |
+| **ORM**         | Django ORM (SQLite by default) |
 
 ---
 
@@ -43,11 +46,12 @@ This project allows users to:
 
 Follow these steps to set up and run the project locally:
 
-1. **Clone the Repository**  
+1. **Clone the Repository**
+
    ```bash
    git clone https://github.com/Karthikeyantestpress/Video-Streaming.git
    cd Video-Streaming
-````
+   ```
 
 2. **Create and Activate Virtual Environment**
 
@@ -67,6 +71,11 @@ Follow these steps to set up and run the project locally:
    ```bash
    sudo apt update
    sudo apt install ffmpeg
+   ```
+
+   Verify installation:
+
+   ```bash
    ffmpeg -version
    ffprobe -version
    ```
@@ -85,8 +94,8 @@ Follow these steps to set up and run the project locally:
    minio server /data --console-address ":9001"
    ```
 
-   Open [http://localhost:9001](http://localhost:9001)
-   Login credentials:
+   Then open [http://localhost:9001](http://localhost:9001)
+   Login using:
 
    ```
    Username: admin
@@ -120,10 +129,11 @@ Follow these steps to set up and run the project locally:
     python manage.py runserver
     ```
 
-Now open the app in your browser:
+Now open:
 
 * App: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 * Admin: [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
 
-```
-```
+✅ You’re all set! Upload a video from the homepage — Celery will automatically process and store the transcoded HLS files in **MinIO**.
+
+---
